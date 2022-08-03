@@ -1,5 +1,5 @@
 const Mongoose=require('mongoose');
-const schema=new Mongoose.schema({
+const schema=Mongoose.Schema({
     name:{
         type:String,
 
