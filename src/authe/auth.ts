@@ -1,6 +1,6 @@
 const user=require("../model/userSchema");
 const bcrypt=require("bcryptjs");
-const sgMail=require('@sendgrid/mail')
+const sgMail=require('@sendgrid/mail');
 const Api_Key="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";
 sgMail.setApiKey(Api_Key);
 const message={
