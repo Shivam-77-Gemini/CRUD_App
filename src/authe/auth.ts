@@ -1,19 +1,32 @@
 const user=require("../model/userSchema");
 const bcrypt=require("bcryptjs");
+const sgMail=require('@sendgrid/mail')
+const Api_Key="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";
+sgMail.setApiKey(Api_Key);
+const message={
+  to:'shivam.tiwari_cs19@gla.ac.in',
+  from:'shivam.tiwari@geminisolutions.com',
+  subject:'Account Created',
+  text:'Congratulations, You have Successfully registered!!',
+  html:'<h1>Congratulations, You have Successfully registered!!</h1>'
+};
 
 
 exports.register= async (req:any,res:any,next:any)=>{
-    const { username, password } = req.body
+    const {name, userName, password } = req.body;
     bcrypt.hash(password, 10).then(async (hash:any) => {
         await user.create({
-          username,
-          password: hash,
+            name,
+          userName,
+          password: hash
         })
-          .then((user:any) =>
+        sgMail.send(message)
+         .then((user:any) =>
             res.status(200).json({
               message: "User successfully created",
-               user,
+              user,
             })
+            
           )
           .catch((error:any) =>
             res.status(400).json({
@@ -62,11 +75,7 @@ exports.register= async (req:any,res:any,next:any)=>{
         if (userName && id) {
             await user.findById(id)
               .then((user:any) => {
-               
-                if (user.role !== "admin") {
-                 
-                  user.save((err:any) => {
-                    
+               user.save((err:any) => {
                     if (err) {
                       res.status("400")
                         .json({ message: "An error occurred", error: err.message });
@@ -74,10 +83,7 @@ exports.register= async (req:any,res:any,next:any)=>{
                     }
                     res.status("201").json({ message: "Update successful", user });
                   });
-                } else {
-                  res.status(400).json({ message: "User is already an Admin" });
-                }
-              })
+               })
               .catch((error:any) => {
                 res.status(400)
                   .json({ message: "An error occurred", error: error.message });
@@ -97,4 +103,14 @@ exports.register= async (req:any,res:any,next:any)=>{
                   .json({ message: "An error occurred", error: error.message })
               )
           }
-      
+      exports.read = async (req:any,res:any,next:any)=>{
+        const users=await user.find({});
+        try{
+          res.send(users);
+          res.status(201).json({message:"All data has been fetched",users});
+        }
+        catch(error:any){
+          res.status(400).json({message:"An error occurred",error:error.message})
+        }
+
+      };
