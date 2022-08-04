@@ -75,10 +75,10 @@ exports.register= async (req:any,res:any,next:any)=>{
         if (userName && id) {
             await user.findById(id)
               .then((user:any) => {
-               user.save((err:any) => {
-                    if (err) {
+               user.save((error:any) => {
+                    if (error) {
                       res.status("400")
-                        .json({ message: "An error occurred", error: err.message });
+                        .json({ message: "An error occurred", error: error.message });
                       process.exit(1);
                     }
                     res.status("201").json({ message: "Update successful", user });
